@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estimulação Precoce - 1º ao 3º Trimestre</title>
+    <style>
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
+
+        .trimester-nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 56px;
+            z-index: 200;
+            background: rgba(30,20,60,0.93);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 0 20px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+        }
+
+        .trimester-nav .brand {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.85em;
+            font-weight: 500;
+            margin-right: 16px;
+            white-space: nowrap;
+        }
+
+        .tri-btn {
+            background: rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.75);
+            border: 1.5px solid rgba(255,255,255,0.2);
+            padding: 7px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            white-space: nowrap;
+        }
+
+        .tri-btn:hover { background: rgba(255,255,255,0.22); color: white; border-color: rgba(255,255,255,0.45); }
+
+        .tri-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 3px 12px rgba(102,126,234,0.5);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 56px; left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            z-index: 199;
+            transition: width 0.4s ease;
+            width: 0%;
+        }
+
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            top: 60px; left: 0; right: 0; bottom: 66px;
+            display: none;
+            padding: 50px 60px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .slide.active { display: flex; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(40px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .slide[data-section="t3"] {
+            overflow-y: auto;
+            justify-content: flex-start;
+            align-items: stretch;
+            background: #f5f7fa;
+            padding: 40px 60px;
+        }
+
+        .title-slide, .cover-slide {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white;
+            text-align: center;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+
+        .title-slide h1, .cover-slide h1 {
+            font-size: 3.2em;
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            line-height: 1.2;
+            color: white !important;
+            border-bottom: 4px solid rgba(255,255,255,0.4) !important;
+        }
+
+        .title-slide h2 { font-size: 1.9em; font-weight: 300; margin-bottom: 35px; opacity: 0.9; }
+
+        .title-slide .subtitle {
+            font-size: 1.2em;
+            background: rgba(255,255,255,0.2);
+            padding: 18px 36px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+        }
+
+        .cover-slide p { color: rgba(255,255,255,0.9); text-align: center !important; font-size: 1.2em; max-width: 800px; }
+        .cover-slide .baby-icon { font-size: 5em; margin: 20px 0; }
+
+        .content-slide, .refs-slide { background: #ffffff; }
+
+        .slide-header {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 76px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            padding: 0 60px;
+            color: white;
+        }
+
+        .slide-header h2 { font-size: 1.7em; font-weight: 600; color: white !important; }
+
+        .slide-content {
+            margin-top: 56px;
+            width: 100%;
+            max-width: 1200px;
+            height: calc(100% - 76px);
+            overflow-y: auto;
+            padding: 20px 0;
+        }
+
+        .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 35px; }
+
+        .content-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 28px;
+            border-radius: 18px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        .content-box h3 { color: #667eea; font-size: 1.35em; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+        .content-box ul { list-style: none; padding-left: 0; }
+        .content-box li { padding: 7px 0 7px 24px; position: relative; font-size: 1.05em; line-height: 1.6; color: #495057; }
+        .content-box li:before { content: "\25B8"; position: absolute; left: 0; color: #667eea; font-weight: bold; }
+
+        .highlight-box {
+            background: rgba(102,126,234,0.08);
+            border: 2px solid #667eea;
+            padding: 22px;
+            border-radius: 14px;
+            margin: 18px 0;
+        }
+
+        .highlight-box p { font-size: 1.15em; color: #495057; line-height: 1.8; font-style: italic; }
+
+        .quote-box {
+            background: rgba(118,75,162,0.08);
+            border-left: 6px solid #764ba2;
+            padding: 20px 25px;
+            border-radius: 0 12px 12px 0;
+            margin: 18px 0;
+            font-style: italic;
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #495057;
+        }
+
+        .activity-card {
+            background: white;
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+            border-top: 5px solid #667eea;
+        }
+
+        .activity-card h3 { color: #667eea; font-size: 1.4em; margin-bottom: 18px; padding-bottom: 10px; border-bottom: 2px solid #e9ecef; }
+
+        .step-list { list-style: none; counter-reset: step; }
+
+        .step-list li {
+            counter-increment: step;
+            padding: 11px 0 11px 48px;
+            position: relative;
+            font-size: 1em;
+            line-height: 1.6;
+            border-bottom: 1px solid #e9ecef;
+            color: #495057;
+        }
+
+        .step-list li:last-child { border-bottom: none; }
+
+        .step-list li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0; top: 50%;
+            transform: translateY(-50%);
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+
+        .theory-card { background: rgba(102,126,234,0.06); border: 1px solid rgba(102,126,234,0.25); border-radius: 16px; padding: 28px; margin: 18px 0; }
+        .theory-card h3 { color: #764ba2; font-size: 1.3em; margin-bottom: 12px; }
+
+        .info-tags { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; }
+        .tag { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 6px 16px; border-radius: 20px; font-size: 0.9em; font-weight: 500; }
+
+        .refs-slide .slide-content { padding: 20px 0; }
+
+        .ref-item {
+            background: #f8f9fa;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            font-size: 0.95em;
+            line-height: 1.7;
+            color: #495057;
+        }
+
+        /* T3 styles */
+        .slide[data-section="t3"] h1 { color: #5a67d8; font-size: 2.3em; margin-bottom: 18px; border-bottom: 4px solid #764ba2; padding-bottom: 14px; }
+        .slide[data-section="t3"] h2 { color: #764ba2; font-size: 1.8em; margin-top: 28px; margin-bottom: 14px; }
+        .slide[data-section="t3"] h3 { color: #667eea; font-size: 1.4em; margin-top: 22px; margin-bottom: 10px; }
+        .slide[data-section="t3"] h4 { color: #553c9a; font-size: 1.2em; margin-top: 18px; margin-bottom: 8px; }
+        .slide[data-section="t3"] p { line-height: 1.8; margin-bottom: 14px; text-align: justify; font-size: 1.05em; }
+        .slide[data-section="t3"] ul, .slide[data-section="t3"] ol { margin-left: 28px; margin-bottom: 14px; }
+        .slide[data-section="t3"] li { margin-bottom: 8px; line-height: 1.6; }
+
+        .slide[data-section="t3"] table { width: 100%; border-collapse: collapse; margin: 18px 0; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .slide[data-section="t3"] th { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 14px; text-align: left; }
+        .slide[data-section="t3"] td { padding: 11px 14px; border-bottom: 1px solid #e2e8f0; }
+        .slide[data-section="t3"] tr:hover { background: #f8fafc; }
+
+        .slide-number { position: absolute; top: 16px; right: 26px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1em; z-index: 5; }
+
+        .reference-box { background: #f0f4ff; border-left: 5px solid #667eea; padding: 16px 20px; margin: 14px 0; border-radius: 0 10px 10px 0; font-size: 0.95em; line-height: 1.7; }
+        .warning-box { background: #fef3c7; border-left: 5px solid #f59e0b; padding: 18px; margin: 18px 0; border-radius: 0 10px 10px 0; }
+        .success-box { background: #d1fae5; border-left: 5px solid #10b981; padding: 18px; margin: 18px 0; border-radius: 0 10px 10px 0; }
+        .icon-box { font-size: 2.5em; text-align: center; margin: 16px 0; }
+        .baby-icon { font-size: 4em; margin: 20px 0; }
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 18px 0; }
+
+        .fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .large-text { font-size: 1.35em; line-height: 1.9; color: #495057; }
+        .full-width { grid-column: 1 / -1; }
+        .caution { background: #fff3cd; border-left: 5px solid #ffc107; padding: 16px 20px; border-radius: 0 10px 10px 0; margin: 14px 0; }
+        .center-text { text-align: center; }
+        .author { font-size: 1.1em; opacity: 0.85; margin-top: 10px; }
+
+        .navigation {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 66px;
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            box-shadow: 0 -3px 20px rgba(0,0,0,0.12);
+            z-index: 150;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 11px 28px;
+            border-radius: 24px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+
+        .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
+        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+        .slide-counter { font-weight: 600; color: #495057; font-size: 1.05em; min-width: 90px; text-align: center; }
+
+        @media (max-width: 768px) {
+            .content-grid, .two-column { grid-template-columns: 1fr; }
+            .slide { padding: 40px 20px; }
+            .slide-header { padding: 0 20px; }
+            .trimester-nav .brand { display: none; }
+            .title-slide h1 { font-size: 2.2em; }
+        }
+
+    </style>
+</head>
+<body>
+
+<nav class="trimester-nav">
+    <span class="brand">Estimulação Precoce</span>
+    <button class="tri-btn active" onclick="switchSection('t1')" id="btn-t1">🌱 1º Trimestre (0–3 m)</button>
+    <button class="tri-btn" onclick="switchSection('t2')" id="btn-t2">🌿 2º Trimestre (4–6 m)</button>
+    <button class="tri-btn" onclick="switchSection('t3')" id="btn-t3">🌳 3º Trimestre (7–9 m)</button>
+</nav>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="presentation" id="presentation">
+<div class="slide title-slide" data-section="t1">
+<h1>Estimulação Precoce no Primeiro Trimestre de Vida</h1>
+<h2>0-3 Meses: Fundamentos Teóricos e Práticas</h2>
+<div class="subtitle">
+                Baseado na Teoria Winnicottiana e Diretrizes do Ministério da Saúde (2023)
+            </div>
+</div>
+<div class="slide content-slide" data-section="t1">
+<div class="slide-header">
+<h2>📚 Introdução Teórica do Período</h2>
+</div>
+<div class="slide-content">
+<div class="content-grid">
+<div class="content-box fade-in-up">
+<h3><span class="icon">🧠</span> Características Maturacionais (0-3 meses)</h3>
+<ul>
+<li>Predominância do tônus de flexão (postura fetal)</li>
+<li>Reflexos primitivos presentes (Moro, preensão palmar, sucção)</li>
+<li>Cabeça instável, necessita de suporte constante</li>
+<li>Movimentos aleatórios e não intencionais</li>
+<li>Início da organização do olhar</li>
+<li>Resposta a estímulos sensoriais básicos</li>
+<li>Choros como principal forma de comunicação</li>
+</ul>
+</div>
+<div class="content-box fade-in-up stagger-1">
+<h3><span class="icon">📋</span> Marcos do Desenvolvimento (MS, 2023)</h3>
+<ul>
+<li>Olhar fixamente para rostos (especialmente mãe/cuidador)</li>
+<li>Seguir objetos em movimento com os olhos</li>
+<li>Levar as mãos à boca</li>
+<li>Abrir e fechar as mãos</li>
+<li>Levantar a cabeça brevemente quando de bruços</li>
+<li>Esticar as pernas quando apoiadas</li>
+<li>Fazer sons de "conforto" (gemidos, suspiros)</li>
+<li>Chorar quando sente desconforto ou fome</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="slide content-slide" data-section="t1">
+<div class="slide-header">
+<h2>🧸 Concepção Winnicottiana</h2>
+</div>
+<div class="slide-content">
+<div class="theory-card fade-in-up">
+<h3>Fase de Dependência Absoluta (0-3 meses)</h3>
+<p>Período de <strong>dependência extrema e total do ambiente</strong>, caracterizado pelo conceito de <em>holding</em> (segurar/sustentar). Não existe ainda um <em>eu</em> integrado, mas uma <strong>tendência inata à integração</strong> que precisa ser conquistada através do cuidado materno adaptado.</p>
+</div>
+<div class="quote-box fade-in-up stagger-1">
+<p>"O processo de amadurecimento pessoal depende fundamentalmente de dois fatores: a tendência inata ao amadurecimento e a existência contínua de um ambiente facilitador. É principalmente a existência deste último que poderá promover o desenvolvimento do bebê."</p>
+<div class="author">— Elsa Oliveira Dias (2003)</div>
+</div>
+<div class="highlight-box fade-in-up stagger-2">
+<p><strong>Preocupação Materna Primária:</strong> Estado no qual a mãe está devotada ao cuidado do nenê, que de início parece ser parte dela mesma. Possibilita que ela reconheça exatamente o que ele precisa, por meio da sua própria experiência como bebê.</p>
+</div>
+</div>
+</div>
+<div class="slide content-slide" data-section="t1">
+<div class="slide-header">
+<h2>💜 Memória da Presença (Trindade &amp; Fonseca-Silva, 2021)</h2>
+</div>
+<div class="slide-content">
+<div class="two-column">
+<div class="content-box fade-in-up">
+<h3><span class="icon">🤱</span> Constituição do Self</h3>
+<ul>
+<li>A constituição do <em>si mesmo</em> winnicottiano está ancorada na experiência de sustentação</li>
+<li>Ambiente suficientemente bom inscreve-se como <strong>memória da presença</strong></li>
+<li>Marcas da presença materna que o bebê sente e confia</li>
+<li>Primeira mamada teórica: construção do evento a partir da memória</li>
+<li>Ilusão de onipotência: o bebê cria o mundo que encontra</li>
+<li>Continuidade de ser promovida pelo <em>holding</em></li>
+</ul>
+</div>
+<div class="content-box fade-in-up stagger-1">
+<h3><span class="icon">🔄</span> Integração e Personalização</h3>
+<ul>
+<li><strong>Integração:</strong> União das partes do corpo em unidade psicossomática</li>
+<li><strong>Personalização:</strong> Inserção da psique no soma pelo toque materno</li>
+<li>O bebê sente seu corpo como algo que lhe pertence</li>
+<li><em>Handling</em> (manejo) une as partes do corpo</li>
+<li>Base para um <em>self</em> integrado e unitário</li>
+<li>Sem ambiente facilitador, não há constituição do eu</li>
+</ul>
+</div>
+</div>
+<div class="quote-box fade-in-up stagger-2" style="margin-top: 30px;">
+<p>"A base da psique é o soma, e, em termos de evolução, o soma foi o primeiro a chegar. A psique começa como uma elaboração imaginativa das funções somáticas."</p>
+<div class="author">— D.W. Winnicott</div>
+</div>
+</div>
+</div>
+<div class="slide content-slide" data-section="t1">
+<div class="slide-header">
+<h2>🎈 Importância do Brincar e da Estimulação</h2>
+</div>
+<div class="slide-content">
+<div class="content-grid">
+<div class="content-box fade-in-up">
+<h3><span class="icon">🧸</span> O Brincar Winnicottiano</h3>
+<ul>
+<li>O bebê chupa o dedo ou agarra cobertor expressando <strong>controle mágico</strong> sobre o mundo</li>
+<li>Prolongamento da onipotência originalmente satisfeita pela adaptação materna</li>
+<li>Primeiro objeto de possessão: criado pelo bebê, mas com características externas</li>
+<li>Transição do controle mágico para controle via manipulação</li>
+<li>Erotismo muscular e prazer da coordenação</li>
+</ul>
+</div>
+<div class="content-box fade-in-up stagger-1">
+<h3><span class="icon">👨‍👩‍👧</span> Estimulação e Família (Scalha et al., 2010)</h3>
+<ul>
+<li>Toda criança brincando desenvolve habilidades motoras, sensoriais, afetivas</li>
+<li>Família motiva e medeia as atividades lúdicas</li>
+<li>Intervenção lúdica proporciona boa estimulação psicomotora</li>
+<li>Presença familiar é fator fundamental</li>
+<li>Ambiente e participação familiar permitem aprendizagem agradável</li>
+<li>Novas relações entre pais e filhos</li>
+</ul>
+</div>
+</div>
+<div class="highlight-box fade-in-up stagger-2" style="margin-top: 30px;">
+<p><strong>Estimulação Adequada ao Tempo do Bebê:</strong> A estimulação precoce deve respeitar o tempo do bebê e inserir-se na relação afetiva com o cuidador. Segundo Arruda e Andrieto (2009), a preocupação materna primária é fundamental para o desenvolvimento emocional saudável, e o cuidado está baseado no gesto do bebê.</p>
+</div>
+</div>
+</div>
+<div class="slide content-slide" data-section="t1">
+<div class="slide-header">
+<h2>🏃‍♂️ FUNÇÕES MOTORAS - Objetivo</h2>
+</div>
+<div class="slide-content">
+<div class="highlight-box fade-in-up" style="text-align: center; padding: 40px;">
+<h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.5em;">O que se busca desenvolver?</h3>
+<p style="font-size: 1.3em; line-height: 2;">
+                        Promover a <strong>integração psicossomática</strong> através do controle do tônus muscular, 
+                        desenvolver a <strong>consciência corporal</strong> básica, estimular os <strong>reflexos primitivos</strong> 
+                        em transição para movimentos voluntários, e fortalecer a musculatura de pescoço e tronco 
+                        para futuras posturas. Busca-se também a <strong>personalização</strong> (inserção da psique no soma) 
+                        através do toque e manejo adequados.
+                    </p>
+</div>
+<div class="content-grid" style="margin-top: 30px;">
+<div class="content-box fade-in-up stagger-1">
+<h3><span class="icon">🎯</span> Conquistas Motoras (0-3 meses)</h3>
+<ul>
+<li>Controle parcial da cabeça (sustentação breve)</li>
+<li>Flexão e extensão alternadas dos membros</li>
+<li>Levantamento da cabeça em prono (45-90 graus)</li>
+<li>Preensão palmar reflexiva</li>
+<li>Chute e movimentação de pernas</li>
+<li>Organização gradual do tônus</li>
+</ul>
+</div>
+<div class="content-box fade-in-up stagger-2">
+<h3><span class="icon">⚠️</span> Sinais de Alerta (MS, 2023)</h3>
+<ul>
+<li>Não fixar o olhar em rostos</li>
+<li>Não reagir a sons ou luzes</li>
+<li>Corpo excessivamente rígido ou "mole"</li>
+<li>Não fazer nenhum som</li>
+<li>Não tentar mover-se</li>
+<li>Não responder ao contato próximo</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="slide activity-slide" data-section="t1">
+<div class="slide-header">
+<h2>🏃‍♂️ Atividades Motoras - Prática</h2>
+</div>
+<div class="slide-content">
+<div class="activity-card fade-in-up">
+<h3>🍼 Posição Prona (De Bruços) - Estimulação do Colo</h3>
+<ul class="step-list">
+<li>Posicione o bebê <strong>de bruços</strong> sobre superfície plana e confortável</li>
+<li>Coloque as mãos do bebê <strong>abaixo do peito</strong> (apoio)</li>
+<li>Posicione-se à <strong>frente do bebê</strong>, no mesmo nível, fazendo contato visual</li>
+<li>Utilize <strong>objetos coloridos ou espelho</strong> para incentivar elevação da cabeça</li>
+<li>Incentive o bebê a <strong>levantar a cabeça</strong> por alguns segundos</li>
+<li>Ao final, retire o bebê da posição <strong>suavemente</strong>, apoiando a cabeça</li>
+</ul>
+<div class="info-tags">
+<span class="tag">⏱️ 3-5 min/sessão</span>
+<span class="tag">📅 2-3x ao dia</span>
+<span class="tag caution">⚠️ Supervisão constante</span>
+</div>
+</div>
+<div class="activity-card fade-in-up stagger-1">
+<h3>🤲 Estimulação da Preensão e Tato</h3>
+<ul class="step-list">
+<li>Posicione o bebê em <strong>supino</strong> ou colo, confortavelmente</li>
+<li>Introduza <strong>suavemente seu dedo</strong> na palma da mão do bebê</li>
+<li>Observe o <strong>reflexo de preensão</strong> (fechamento dos dedos)</li>
+<li>Ofereça <strong>objetos de diferentes texturas</strong> (macio, áspero, liso)</li>
+<li>Movimente os objetos <strong>gentilmente</strong> sobre a pele do bebê</li>
+<li>Incentive o bebê a <strong>levar as mãos à boca</strong> (exploração oral)</li>
+</ul>
+<div class="info-tags">
+<span class="tag">⏱️ 5-10 min/sessão</span>
+<span class="tag">📅 Várias vezes/dia</span>
+<span class="tag">💡 Integrar aos cuidados</span>
+</div>
+</div>
+</div>
+</div>
+<div class="slide theory-slide" data-section="t1">
+<div class="slide-header">
+<h2>🏃‍♂️ Fundamentação Psicológica - Motor</h2>
+</div>
+<div class="slide-content">
+<div class="theory-card fade-in-up">
+<h3>Holding e Integração Psicossomática</h3>
+<p>Segundo Winnicott, o <strong><em>holding</em></strong> não é apenas o segurar físico, mas a <strong>provisão ambiental total</strong> que facilita a constituição do bebê como um <em>eu</em> capaz de viver relações com o mundo. A posição prona, quando realizada com segurança e contato visual, promove a <strong>integração</strong> das experiências motoras e sensoriais.</p>
+</div>
+<div class="quote-box fade-in-up stagger-1">
+<p>"O manuseio da pele no cuidado do bebê é um fator importante no estímulo a uma vida saudável dentro do corpo, da mesma forma como os modos de segurar a criança auxiliam o processo de integração."</p>
+<div class="author">— D.W. Winnicott</div>
+</div>
+<div class="theory-card fade-in-up stagger-2">
+<h3>Contribuição de Maia &amp; Pinheiro (2019)</h3>
+<p>A <strong>personalização</strong> é a conquista de uma relação íntima entre a psique e o soma, ocorrendo pelo toque materno. O bebê passa a sentir, como consequência do toque amoroso, que seu corpo constitui-se nele mesmo e/ou que seu sentimento de <em>self</em> centra-se no interior de seu próprio corpo. Sem ambiente facilitador, não há constituição do eu.</p>
+</div>
+</div>
+</div>
+<div class="slide content-slide" data-section="t1">
+<div class="slide-header">
+<h2>🧩 FUNÇÕES COGNITIVAS - Objetivo</h2>
+</div>
+<div class="slide-content">
+<div class="highlight-box fade-in-up" style="text-align: center; padding: 40px;">
+<h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.5em;">O que se busca desenvolver?</h3>
+<p style="font-size: 1.3em; line-height: 2;">
+                        Estimular a <strong>organização do olhar</strong> e a fixação visual, promover o início da 
+                        <strong>coordenação olho-cabeça</strong>, desenvolver a atenção aos estímulos sensoriais 
+                        (visuais, auditivos, táteis), e favorecer a <strong>memória da presença</strong> através 
+                        da constância dos cuidados. Busca-se também o início do reconhecimento do rosto materno.
+                    </p>
+</div>
+<div class="content-grid" style="margin-top: 30px;">
+<div class="content-box fade-in-up stagger-1">
+<h3><span class="icon">👁️</span> Conquistas Cognitivas (0-3 meses)</h3>
+<ul>
+<li>Fixação do olhar em rostos (30-40 cm)</li>
+<li>Seguimento visual de objetos em movimento</li>
+<li>Resposta a estímulos auditivos (virar para o som)</li>
+<li>Diferenciação de tons de voz</li>
+<li>Exploração oral de objetos (boca como órgão sensorial)</li>
+<li>Início do reconhecimento do cuidador primário</li>
+</ul>
+</div>
+<div class="content-box fade-in-up stagger-2">
+<h3><span class="icon">🎨</span> Estímulos Adequados</h3>
+<ul>
+<li>Rostos humanos (principalmente mãe/cuidador)</li>
+<li>Objetos de alto contraste (preto/branco, vermelho)</li>
+<li>Sons suaves e melodiosos (voz materna)</li>
+<li>Movimentos lentos e previsíveis</li>
+<li>Texturas variadas para exploração tátil</li>
+<li>Estímulos não invasivos, respeitando o estado de alerta</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="slide activity-slide" data-section="t1">
+<div class="slide-header">
+<h2>🧩 Atividades Cognitivas - Prática</h2>
+</div>
+<div class="slide-content">
+<div class="activity-card fade-in-up">
+<h3>👀 Estimulação Visual - "Olho no Olho"</h3>
+<ul class="step-list">
+<li>Posicione o bebê em <strong>colo</strong> ou superfície confortável, a 20-30 cm de distância</li>
+<li>Estabeleça <strong>contato visual direto</strong> com o bebê</li>
+<li>Mova <strong>suavemente a cabeça</strong> de um lado para o outro</li>
+<li>Observe se o bebê <strong>segue seu rosto</strong> com os olhos</li>
+<li>Utilize <strong>expressões faciais amplas</strong> (sorriso, surpresa)</li>
+<li>Mantenha o contato por <strong>alguns segundos</strong>, respeitando o desvio do olhar</li>
+</ul>
+<div class="info-tags">
+<span class="tag">⏱️ 5-10 min/sessão</span>
+<span class="tag">📅 Várias vezes/dia</span>
+<span class="tag">💡 Durante amamentação</span>
+</div>
+</div>
+<div class="activity-card fade-in-up stagger-1">
+<h3>🔔 Estimulação Auditiva e Localização</h3>
+<ul class="step-list">
+<li>Posicione o bebê em <strong>supino</strong>, em ambiente calmo</li>
+<li>Produza <strong>sons suaves</strong> (chocalho, campainha, voz) à direita do bebê</li>
+<li>Observe se o bebê <strong>para de se mover</strong> e vira para o som</li>
+<li>Repita o som à <strong>esquerda, acima e abaixo</strong></li>
+<li>Cante <strong>canções de ninar</strong> ou fale com tom melodioso</li>
+<li>Varie o tom e a intensidade da voz, observando as reações</li>
+</ul>
+<div class="info-tags">
+<span class="tag">⏱️ 10-15 min/sessão</span>
+<span class="tag">📅 2-3x ao dia</span>
+<span class="tag caution">⚠️ Evitar sons altos</span>
+</div>
+</div>
+</div>
+</div>
+<div class="slide theory-slide" data-section="t1">
+<div class="slide-header">
+<h2>🧩 Fundamentação Psicológica - Cognitiva</h2>
+</div>
+<div class="slide-content">
+<div class="theory-card fade-in-up">
+<h3>Memória da Presença e Ilusão de Onipotência</h3>
+<p>A organização do olhar e a fixação no rosto materno constituem as primeiras marcas da <strong>memória da presença</strong>. O bebê começa a ter material para criar e, aos poucos, torna-se capaz de "alucinar" o mamilo no momento em que a mãe está pronta para oferecê-lo. Esta é a vivência da <strong>ilusão de onipotência</strong>.</p>
+</div>
+<div class="quote-box fade-in-up stagger-1">
+<p>"A primeira mamada teórica é também a primeira mamada real, exceto pelo fato de que a experiência real não é tanto um acontecimento singular quanto uma construção do evento a partir da memória."</p>
+<div class="author">— D.W. Winnicott</div>
+</div>
+<div class="theory-card fade-in-up stagger-2">
+<h3>Ambiente Suficientemente Bom (Trindade &amp; Fonseca-Silva, 2021)</h3>
+<p>A constância e repetição dos cuidados ofertados pela mãe consolidam as primeiras impressões da presença materna. O bebê precisa de uma mãe atenta às necessidades específicas daquele tempo; o cuidado programado, externo ao tempo do bebê, é percebido como técnica, como um cuidado geral, portanto <strong>irreal para o bebê</strong>.</p>
+</div>
+</div>
+</div>
+<div class="slide content-slide" data-section="t1">
+<div class="slide-header">
+<h2>💝 FUNÇÕES SOCIOEMOCIONAIS - Objetivo</h2>
+</div>
+<div class="slide-content">
+<div class="highlight-box fade-in-up" style="text-align: center; padding: 40px;">
+<h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.5em;">O que se busca desenvolver?</h3>
+<p style="font-size: 1.3em; line-height: 2;">
+                        Estabelecer o <strong>vínculo de apego seguro</strong> entre bebê e cuidador, promover a 
+                        <strong>continuidade de ser</strong> através da preocupação materna primária, desenvolver 
+                        a <strong>comunicação preverbal</strong> (choro, gemidos, contato visual), e favorecer a 
+                        capacidade de <em>estar só na presença de alguém</em>. Busca-se também a diferenciação 
+                        básica entre prazer e desconforto.
+                    </p>
+</div>
+<div class="content-grid" style="margin-top: 30px;">
+<div class="content-box fade-in-up stagger-1">
+<h3><span class="icon">💕</span> Conquistas Socioemocionais (0-3 meses)</h3>
+<ul>
+<li>Calmar-se com contato físico (colinho, embalo)</li>
+<li>Estabelecer contato visual prolongado</li>
+<li>Diferenciar cuidadores de estranhos (reconhecimento)</li>
+<li>Emitir sons de conforto (gemidos, suspiros)</li>
+<li>Chorar para comunicar necessidades</li>
+<li>Resposta ao toque (acalma-se ou excita-se)</li>
+</ul>
+</div>
+<div class="content-box fade-in-up stagger-2">
+<h3><span class="icon">🤱</span> Práticas de Vínculo</h3>
+<ul>
+<li>Contato pele a pele (kangaroo care)</li>
+<li>Amamentação responsiva (ao sinal do bebê)</li>
+<li>Embalo e movimentos rítmicos suaves</li>
+<li>Fala materna (motherese) - tom melodioso</li>
+<li>Resposta imediata às necessidades</li>
+<li>Presença silenciosa e não invasiva</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="slide activity-slide" data-section="t1">
+<div class="slide-header">
+<h2>💝 Atividades Socioemocionais - Prática</h2>
+</div>
+<div class="slide-content">
+<div class="activity-card fade-in-up">
+<h3>🤱 Contato Pele a Pele (Kangaroo Care)</h3>
+<ul class="step-list">
+<li>Posicione o bebê <strong>despido</strong> (apenas fralda) contra seu peito</li>
+<li>Cubra o bebê com <strong>mantas ou sua blusa</strong>, deixando a cabeça livre</li>
+<li>Mantenha <strong>contato visual</strong> quando o bebê estiver acordado</li>
+<li>Permita que o bebê <strong>ouça seu coração</strong> e sinta seu calor</li>
+<li>Converse <strong>suavemente</strong> ou cante canções de ninar</li>
+<li>Realize durante <strong>20-60 minutos</strong>, em ambiente calmo e aquecido</li>
+</ul>
+<div class="info-tags">
+<span class="tag">⏱️ 20-60 min/sessão</span>
+<span class="tag">📅 1-2x ao dia</span>
+<span class="tag">💡 Ideal após o banho</span>
+</div>
+</div>
+<div class="activity-card fade-in-up stagger-1">
+<h3>🗣️ Comunicação Preverbal e "Motherese"</h3>
+<ul class="step-list">
+<li>Posicione o bebê de forma que possa <strong>ver seu rosto</strong></li>
+<li>Converse com <strong>tom de voz melodioso</strong>, entonação elevada</li>
+<li>Imite os <strong>sons que o bebê emite</strong> (cooing, gemidos)</li>
+<li>Amplie os sons do bebê em <strong>sílabas completas</strong></li>
+<li>Faça <strong>pausas</strong> como se esperasse uma resposta</li>
+<li>Utilize <strong>expressões faciais</strong> associadas às palavras</li>
+</ul>
+<div class="info-tags">
+<span class="tag">⏱️ Contínuo</span>
+<span class="tag">📅 Durante todos os cuidados</span>
+<span class="tag">💡 Integrar à rotina</span>
+</div>
+</div>
+</div>
+</div>
+<div class="slide theory-slide" data-section="t1">
+<div class="slide-header">
+<h2>💝 Fundamentação Psicológica - Socioemocional</h2>
+</div>
+<div class="slide-content">
+<div class="theory-card fade-in-up">
+<h3>Preocupação Materna Primária (Arruda &amp; Andrieto, 2009)</h3>
+<p>A <strong>preocupação materna primária</strong> é o estado no qual a mãe está devotada ao cuidado do nenê, que de início parece ser parte dela mesma. Possibilita que ela reconheça exatamente o que ele precisa. O cuidado está baseado no <strong>gesto do bebê</strong>, no qual ele tem a ilusão de ter criado o mundo. Este é o fundamento da saúde mental futura.</p>
+</div>
+<div class="quote-box fade-in-up stagger-1">
+<p>"A habilidade de estar realmente só tem sua base na experiência precoce de estar só na presença de alguém. Sem uma suficiência dessa experiência, a capacidade de ficar só não pode se desenvolver."</p>
+<div class="author">— D.W. Winnicott</div>
+</div>
+<div class="theory-card fade-in-up stagger-2">
+<h3>Continuidade de Ser e Memória da Presença (Trindade &amp; Fonseca-Silva, 2021)</h3>
+<p>O estado unitário do <em>eu</em> se forma quando o ambiente responde e atende às necessidades do bebê. A <strong>memória da presença</strong> constitui-se nas marcas da presença materna que o bebê já é capaz de sentir e confiar, pelas repetidas experiências em que pôde se retirar do mundo objetivo tranquilamente, retornando ao seu mundo subjetivo no descanso propiciado pelo ambiente adaptado.</p>
+</div>
+</div>
+</div>
+<div class="slide content-slide" data-section="t1">
+<div class="slide-header">
+<h2>🌟 SÍNTESE INTEGRATIVA</h2>
+</div>
+<div class="slide-content">
+<div class="content-grid">
+<div class="content-box fade-in-up">
+<h3><span class="icon">⏰</span> Respeito ao Tempo do Bebê</h3>
+<p style="font-size: 1.1em; line-height: 1.8; color: #495057;">
+                            A estimulação precoce é saudável quando <strong>respeita o tempo do bebê</strong> 
+                            e se insere na relação afetiva. Dar tempo para a criança e respeitar seu ritmo é 
+                            fundamental. As formas mais naturais e espontâneas de movimento são as mais eficientes, 
+                            nas quais a criança tem maior destreza.
+                        </p>
+</div>
+<div class="content-box fade-in-up stagger-1">
+<h3><span class="icon">🚫</span> Não Antecipar Simbolizações</h3>
+<p style="font-size: 1.1em; line-height: 1.8; color: #495057;">
+                            A estimulação que antecipa simbolizações ou exige conquistas para as quais o bebê 
+                            não está maturacionalmente preparado configura-se como <strong>invasão</strong>. 
+                            O cuidado técnico e programado é sentido como irreal para o bebê, ferindo o 
+                            <em>true self</em> e favorecendo o <em>false self</em> como defesa.
+                        </p>
+</div>
+</div>
+<div class="content-grid" style="margin-top: 20px;">
+<div class="content-box fade-in-up stagger-2">
+<h3><span class="icon">💞</span> Relação Afetiva com o Cuidador</h3>
+<p style="font-size: 1.1em; line-height: 1.8; color: #495057;">
+                            A estimulação deve estar <strong>inserida na relação afetiva</strong> com o cuidador, 
+                            nunca sendo uma técnica mecânica ou impessoal. O <em>holding</em> não é apenas 
+                            segurar fisicamente, mas a <strong>provisão ambiental total</strong> anterior ao 
+                            conceito de "viver com".
+                        </p>
+</div>
+<div class="content-box fade-in-up stagger-3">
+<h3><span class="icon">🔄</span> Continuidade do Desenvolvimento</h3>
+<p style="font-size: 1.1em; line-height: 1.8; color: #495057;">
+                            As práticas favorecem a <strong>continuidade do desenvolvimento emocional</strong> 
+                            através da <strong>memória da presença</strong>. O ambiente suficientemente bom 
+                            oportuniza as três conquistas fundamentais: <strong>integração</strong>, 
+                            <strong>personalização</strong> e <strong>relações objetais</strong>.
+                        </p>
+</div>
+</div>
+</div>
+</div>
+<div class="slide refs-slide" data-section="t1">
+<div class="slide-header">
+<h2>📚 REFERÊNCIAS</h2>
+</div>
+<div class="slide-content">
+<div class="ref-item">
+<strong>ARRUDA, S. L. S.; ANDRIETO, E.</strong> Mães psicóticas e seus bebês: uma leitura winnicottiana. 
+                    <em>Arquivos Brasileiros de Psicologia</em>, Rio de Janeiro, v. 61, n. 3, p. 97-110, 2009.
+                </div>
+<div class="ref-item">
+<strong>BRASIL. Ministério da Saúde.</strong> <em>Desenvolvimento neuropsicomotor, sinais de alerta e estimulação precoce: um guia para profissionais de saúde e educação</em>. Brasília: MS, 2023.
+                </div>
+<div class="ref-item">
+<strong>BRASIL. Ministério da Saúde.</strong> <em>Diretrizes de estimulação precoce: crianças de zero a 3 anos com atraso no desenvolvimento neuropsicomotor</em>. Brasília: MS, 2016.
+                </div>
+<div class="ref-item">
+<strong>DIAS, E. O.</strong> <em>A teoria do amadurecimento de D. W. Winnicott</em>. Rio de Janeiro: Imago, 2003.
+                </div>
+<div class="ref-item">
+<strong>HADDERS-ALGRA, M.</strong> Early human motor development: From variation to the ability to vary and adapt. 
+                    <em>Neuroscience &amp; Biobehavioral Reviews</em>, v. 107, p. 729-743, 2019.
+                </div>
+<div class="ref-item">
+<strong>MAIA, L. A.; PINHEIRO, M. C. P.</strong> As contribuições de Donald Woods Winnicott para a psicossomática. 
+                    <em>Psicoterapia</em>, v. 42, n. 2, p. 1-10, 2019.
+                </div>
+<div class="ref-item">
+<strong>SANTOS, E. S.</strong> <em>D. W. Winnicott e Heidegger: a teoria do amadurecimento pessoal e a acontecência humana</em>. Tese (Doutorado) - UNICAMP, Campinas, 2006.
+                </div>
+<div class="ref-item">
+<strong>SCALHA, T. B. et al.</strong> A importância do brincar no desenvolvimento psicomotor: relato de experiência. 
+                    <em>Revista de Psicologia da UNESP</em>, v. 9, n. 2, p. 81-91, 2010.
+                </div>
+<div class="ref-item">
+<strong>TRINDADE, J. C. S.; FONSECA-SILVA, M. C.</strong> Memória da presença e desenvolvimento emocional em Winnicott. 
+                    <em>Natureza Humana</em>, São Paulo, v. 23, n. 1, p. 55-82, 2021.
+                </div>
+<div class="ref-item">
+<strong>WINNICOTT, D. W.</strong> <em>O Brincar e a Realidade</em>. Rio de Janeiro: Imago, 2019.
+                </div>
+</div>
+</div>
+<div class="slide title-slide" data-section="t1">
+<h1>Obrigada!</h1>
+<h2>Estimulação Precoce com Base Científica</h2>
+<div class="subtitle" style="margin-top: 40px;">
+                "A saúde mental de qualquer sujeito está relacionada com o desenvolvimento emocional primitivo do bebê."<br/>
+<em>— D.W. Winnicott</em>
+</div>
+</div>
+<div class="slide title-slide" data-section="t2">
+<h1>Estimulação Precoce no Segundo Trimestre de Vida</h1>
+<h2>4-6 Meses: Fundamentos Teóricos e Práticas</h2>
+<div class="subtitle">
+                Baseado na Teoria Winnicottiana e Diretrizes do Ministério da Saúde (2023)
+            </div>
+</div>
+<div class="slide content-slide" data-section="t2">
+<div class="slide-header">
+<h2>📚 Introdução Teórica do Período</h2>
+</div>
+<div class="slide-content">
+<div class="content-grid">
+<div class="content-box fade-in-up">
+<h3><span class="icon">🧠</span> Características Maturacionais</h3>
+<ul>
+<li>Alternância entre extensão e flexão dos membros</li>
+<li>Postura mais simétrica e cabeça centralizada</li>
+<li>União das mãos na linha média</li>
+<li>Domínio dos movimentos rotacionais (rolar)</li>
+<li>Início da postura sentada com apoio</li>
+<li>Elevação do quadril e arrastar em supino</li>
+</ul>
+</div>
+<div class="content-box fade-in-up stagger-1">
+<h3><span class="icon">📋</span> Marcos do Desenvolvimento (MS, 2023)</h3>
+<ul>
+<li>Rolar de bruços para costas e vice-versa</li>
+<li>Sentar com apoio, cabeça erguida firmemente</li>
+<li>Reconhecer pessoas à distância</li>
+<li>Seguir objetos visualmente</li>
+<li>Sorrir espontaneamente (sorriso social)</li>
+<li>Balbuciar e usar movimentos para chamar atenção</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="slide content-slide" data-section="t2">
+<div class="slide-header">
+<h2>🧸 Concepção Winnicottiana</h2>
+</div>
+<div class="slide-content">
+<div class="theory-card fade-in-up">
+<h3>Fase de Dependência Absoluta (4-6 meses)</h3>
+<p>Período de <strong>dependência extrema do ambiente</strong>, caracterizado pelo conceito de <em>holding</em> (segurar/sustentar) - não apenas físico, mas a provisão ambiental total que facilita a constituição do bebê como um <em>eu</em> capaz de viver relações com o mundo.</p>
+</div>
+<div class="quote-box fade-in-up stagger-1">
+<p>"O processo de amadurecimento pessoal depende fundamentalmente de dois fatores: a tendência inata ao amadurecimento e a existência contínua de um ambiente facilitador."</p>
+<div class="author">— Elsa Oliveira Dias (2003)</div>
+</div>
+<div class="highlight-box fade-in-up stagger-2">
+<p><strong>Ilusão de Onipotência:</strong> O bebê cria subjetivamente o mundo que encontra. Aos poucos, torna-se capaz de "alucinar" o mamilo no momento em que a mãe está pronta para oferecê-lo, vivenciando a criação do objeto.</p>
+</div>
+</div>
+</div>
+<div class="slide content-slide" data-section="t2">
+<div class="slide-header">
+<h2>💜 Memória da Presença (Trindade &amp; Fonseca-Silva, 2021)</h2>
+</div>
+<div class="slide-content">
+<div class="two-column">
+<div class="content-box fade-in-up">
+<h3><span class="icon">🤱</span> Constituição do Self</h3>
+<ul>
+<li>A constituição do <em>si mesmo</em> winnicottiano está ancorada na experiência de sustentação</li>
+<li>Ambiente suficientemente bom inscreve-se como <strong>memória da presença</strong></li>
+<li>Marcas da presença materna que o bebê sente e confia</li>
+<li>Repetidas experiências de retorno ao mundo subjetivo</li>
+<li>Descanso e relaxamento propiciados pelo ambiente adaptado</li>
+</ul>
+</div>
+<div class="content-box fade-in-up stagger-1">
+<h3><span class="icon">🔄</span> Integração Psicossomática</h3>
+<ul>
+<li><strong>Personalização:</strong> Inserção da psique no soma pelo toque materno</li>
+<li>O bebê sente seu corpo como algo que lhe pertence</li>
+<li><em>Handling</em> (manejo) une as partes do corpo</li>
+<li>Base para um <em>self</em> integrado e unitário</li>
+<li>Continuidade de ser promovida pelo <em>holding</em></li>
+</ul>
+</div>
+</div>
+<div class="quote-box fade-in-up stagger-2" style="margin-top: 30px;">
+<p>"A habilidade de estar realmente só tem sua base na experiência precoce de estar só na presença de alguém."</p>
+<div class="author">— D.W. Winnicott</div>
+</div>
+</div>
+</div>
+<div class="slide content-slide" data-section="t2">
+<div class="slide-header">
+<h2>🏃‍♂️ FUNÇÕES MOTORAS - Objetivo</h2>
+</div>
+<div class="slide-content">
+<div class="highlight-box fade-in-up" style="text-align: center; padding: 40px;">
+<h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.5em;">O que se busca desenvolver?</h3>
+<p style="font-size: 1.3em; line-height: 2;">
+                        Promover o <strong>controle postural</strong>, desenvolver a musculatura de tronco e pelve, 
+                        a <strong>coordenação motora global</strong> e o domínio dos movimentos rotacionais (rolar). 
+                        Preparar o bebê para a postura sentada, estimulando as <strong>reações de equilíbrio e proteção</strong>, 
+                        fundamentais para a independência motora futura.
+                    </p>
+</div>
+<div class="content-grid" style="margin-top: 30px;">
+<div class="content-box fade-in-up stagger-1">
+<h3><span class="icon">🎯</span> Conquistas Motoras (4-6 meses)</h3>
+<ul>
+<li>Rolar em ambos os sentidos</li>
+<li>Apoiar-se nos antebraços (prona)</li>
+<li>Elevar quadril em supino</li>
+<li>Sentar com apoio mantendo tronco ereto</li>
+<li>Reações de equilíbrio e proteção</li>
+</ul>
+</div>
+<div class="content-box fade-in-up stagger-2">
+<h3><span class="icon">⚠️</span> Sinais de Alerta (MS, 2023)</h3>
+<ul>
+<li>Não tentar pegar objetos ao alcance</li>
+<li>Não rolar em nenhuma direção</li>
+<li>Não sentar com ajuda</li>
+<li>Rigidez ou flacidez excessiva</li>
+<li>Não levar objetos à boca</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="slide activity-slide" data-section="t2">
+<div class="slide-header">
+<h2>🏃‍♂️ Atividades Motoras - Prática 1</h2>
+</div>
+<div class="slide-content">
+<div class="activity-card fade-in-up">
+<h3>🔄 Estimulação do Rolamento</h3>
+<ul class="step-list">
+<li>Posicione o bebê em <strong>supino</strong> sobre superfície plana e confortável</li>
+<li>Coloque um brinquedo colorido ao lado, ligeiramente fora do alcance</li>
+<li>Chame a atenção do bebê movimentando o objeto e emitindo sons</li>
+<li>Incentive a seguir o objeto com o olhar e girar o tronco</li>
+<li>Auxilie suavemente a completar o movimento, apoiando pelve e ombros</li>
+<li>Em <strong>prono</strong>, mantenha o objeto à frente para elevação da cabeça</li>
+</ul>
+<div class="info-tags">
+<span class="tag">⏱️ 5-10 min/sessão</span>
+<span class="tag">📅 2-3x ao dia</span>
+<span class="tag caution">⚠️ Nunca forçar</span>
+</div>
+</div>
+<div class="activity-card fade-in-up stagger-1">
+<h3>🪑 Postura Sentada com Apoio</h3>
+<ul class="step-list">
+<li>Posicione o bebê <strong>sentado no colo</strong> ou em almofada específica</li>
+<li>Garanta apoio na pelve e supervisão constante</li>
+<li>Incentive a manter equilíbrio com apoio anterior das mãos</li>
+<li>Ofereça brinquedos para alcance, liberando apoio de uma mão</li>
+<li>Realize movimentos suaves de inclinação (frente, trás, lados)</li>
+<li>Ative musculatura de tronco e reações de retificação</li>
+</ul>
+<div class="info-tags">
+<span class="tag">⏱️ 5-15 min/sessão</span>
+<span class="tag">📅 Várias vezes/dia</span>
+<span class="tag caution">⚠️ Supervisão constante</span>
+</div>
+</div>
+</div>
+</div>
+<div class="slide theory-slide" data-section="t2">
+<div class="slide-header">
+<h2>🏃‍♂️ Fundamentação Psicológica - Motor</h2>
+</div>
+<div class="slide-content">
+<div class="theory-card fade-in-up">
+<h3>Integração Psicossomática (Personalização)</h3>
+<p>Segundo Winnicott, a <strong>personalização</strong> ocorre pelo toque materno, de modo que o bebê passa a sentir que seu corpo constitui-se nele mesmo e que seu sentimento de <em>self</em> centra-se no interior de seu próprio corpo.</p>
+</div>
+<div class="quote-box fade-in-up stagger-1">
+<p>"O manuseio da pele no cuidado do bebê é um fator importante no estímulo a uma vida saudável dentro do corpo, da mesma forma como os modos de segurar a criança auxiliam o processo de integração."</p>
+<div class="author">— D.W. Winnicott</div>
+</div>
+<div class="theory-card fade-in-up stagger-2">
+<h3>Contribuição de Maia &amp; Pinheiro (2019)</h3>
+<p>A <strong>personalização</strong> é a conquista de uma relação íntima entre a psique e o soma. O bebê nasce com tendências herdadas que o impulsionam para um processo de crescimento, incluindo a propensão rumo à integração da personalidade em corpo e psique. Esses processos não podem acontecer sem um ambiente facilitador.</p>
+</div>
+</div>
+</div>
+<div class="slide content-slide" data-section="t2">
+<div class="slide-header">
+<h2>🧩 FUNÇÕES COGNITIVAS - Objetivo</h2>
+</div>
+<div class="slide-content">
+<div class="highlight-box fade-in-up" style="text-align: center; padding: 40px;">
+<h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.5em;">O que se busca desenvolver?</h3>
+<p style="font-size: 1.3em; line-height: 2;">
+                        Promover a <strong>coordenação olho-mão</strong>, a atenção visual, a percepção de <strong>causa e efeito</strong>, 
+                        o reconhecimento de objetos e pessoas familiares, e o início da noção de <strong>permanência do objeto</strong>. 
+                        Estimular a curiosidade e a exploração ativa do ambiente.
+                    </p>
+</div>
+<div class="content-grid" style="margin-top: 30px;">
+<div class="content-box fade-in-up stagger-1">
+<h3><span class="icon">👁️</span> Conquistas Cognitivas</h3>
+<ul>
+<li>Seguir objetos visualmente até a queda</li>
+<li>Coordenação olho-mão para alcance</li>
+<li>Exploração tátil e oral de objetos</li>
+<li>Reconhecimento de pessoas à distância</li>
+<li>Localização de fontes sonoras</li>
+</ul>
+</div>
+<div class="content-box fade-in-up stagger-2">
+<h3><span class="icon">🎮</span> Brincadeiras Fundamentais</h3>
+<ul>
+<li>Esconde-achou (noção de permanência)</li>
+<li>Chocalhos e objetos sonoros</li>
+<li>Espelhos não quebráveis</li>
+<li>Objetos de diferentes texturas</li>
+<li>Livros de pano/cartão</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="slide activity-slide" data-section="t2">
+<div class="slide-header">
+<h2>🧩 Atividades Cognitivas - Prática</h2>
+</div>
+<div class="slide-content">
+<div class="activity-card fade-in-up">
+<h3>👋 Coordenação Olho-Mão</h3>
+<ul class="step-list">
+<li>Posicione o bebê em <strong>supino</strong> ou sentado com apoio</li>
+<li>Apresente objetos de <strong>cores primárias</strong> (20-30 cm do rosto)</li>
+<li>Mova o objeto lentamente, incentivando a seguir com o olhar</li>
+<li>Posicione próximo às mãos para incentivar o alcance e preensão</li>
+<li>Incentive a explorar com as mãos e levar à boca (supervisionado)</li>
+<li>Ofereça objetos de diferentes texturas, formas e sons</li>
+</ul>
+<div class="info-tags">
+<span class="tag">⏱️ 10-15 min/sessão</span>
+<span class="tag">📅 3-4x ao dia</span>
+<span class="tag caution">⚠️ Evitar engasgo</span>
+</div>
+</div>
+<div class="activity-card fade-in-up stagger-1">
+<h3>🙈 Brincadeira de Esconde-Achou</h3>
+<ul class="step-list">
+<li>Mostre ao bebê um <strong>objeto interessante</strong> (brinquedo favorito)</li>
+<li>Esconda <strong>parcialmente</strong> sob um pano, mantendo no campo visual</li>
+<li>Incentive o bebê a procurar o objeto</li>
+<li>Remova o pano juntos, comemorando a descoberta</li>
+<li>Progressivamente, esconda <strong>completamente</strong> o objeto</li>
+<li>Observe se demonstra interesse em procurá-lo</li>
+</ul>
+<div class="info-tags">
+<span class="tag">⏱️ 5-10 min/sessão</span>
+<span class="tag">📅 1-2x ao dia</span>
+<span class="tag caution">⚠️ Evitar frustração</span>
+</div>
+</div>
+</div>
+</div>
+<div class="slide theory-slide" data-section="t2">
+<div class="slide-header">
+<h2>🧩 Fundamentação Psicológica - Cognitiva</h2>
+</div>
+<div class="slide-content">
+<div class="theory-card fade-in-up">
+<h3>Ilusão de Onipotência e Criação do Objeto</h3>
+<p>A coordenação olho-mão representa o início da relação com <strong>objetos subjetivamente criados</strong>. Quando o bebê estende a mão para um objeto visualizado e o agarra, está vivenciando a ilusão de que <em>criou</em> aquilo que encontrou. Esta experiência é fundamental para a constituição de um mundo interno rico.</p>
+</div>
+<div class="quote-box fade-in-up stagger-1">
+<p>"Aos poucos, o bebê torna-se capaz de alucinar o mamilo no momento em que a mãe está pronta para oferecê-lo, isto é a vivência da ilusão de onipotência, ou seja, a criação do objeto."</p>
+<div class="author">— D.W. Winnicott</div>
+</div>
+<div class="theory-card fade-in-up stagger-2">
+<h3>Memória da Presença (Trindade &amp; Fonseca-Silva, 2021)</h3>
+<p>A constância e repetição dos cuidados consolidam as primeiras impressões da presença materna, possibilitando a experiência da ilusão da criação do mundo. O bebê precisa de uma mãe atenta às necessidades específicas daquele tempo; o cuidado programado é <strong>irreal para o bebê</strong>.</p>
+</div>
+</div>
+</div>
+<div class="slide content-slide" data-section="t2">
+<div class="slide-header">
+<h2>💝 FUNÇÕES SOCIOEMOCIONAIS - Objetivo</h2>
+</div>
+<div class="slide-content">
+<div class="highlight-box fade-in-up" style="text-align: center; padding: 40px;">
+<h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.5em;">O que se busca desenvolver?</h3>
+<p style="font-size: 1.3em; line-height: 2;">
+                        Fortalecer o <strong>vínculo afetivo</strong> entre bebê e cuidador, promover o <strong>sorriso social</strong>, 
+                        desenvolver a comunicação não verbal (gestos, vocalizações), estimular a expressão de emoções 
+                        e a <strong>interação recíproca</strong>. Promover a confiança no ambiente e a capacidade de <em>estar só na presença de alguém</em>.
+                    </p>
+</div>
+<div class="content-grid" style="margin-top: 30px;">
+<div class="content-box fade-in-up stagger-1">
+<h3><span class="icon">😊</span> Conquistas Socioemocionais</h3>
+<ul>
+<li>Sorrir espontaneamente (sorriso social)</li>
+<li>Dar gritinhos quando sente prazer</li>
+<li>Balbuciar para brinquedos</li>
+<li>Demonstrar excitação com brincadeiras</li>
+<li>Usar movimentos para chamar atenção</li>
+<li>Diferenciar cuidadores de estranhos</li>
+</ul>
+</div>
+<div class="content-box fade-in-up stagger-2">
+<h3><span class="icon">🤗</span> Atividades de Vínculo</h3>
+<ul>
+<li>Contato visual prolongado</li>
+<li>Imitação de expressões faciais</li>
+<li>Brincadeiras de contato corporal</li>
+<li>Massagem e cócegas suaves</li>
+<li>Conversas preverbais (turnos)</li>
+<li>Cantigas e parlendas</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="slide activity-slide" data-section="t2">
+<div class="slide-header">
+<h2>💝 Atividades Socioemocionais - Prática</h2>
+</div>
+<div class="slide-content">
+<div class="activity-card fade-in-up">
+<h3>😍 Interação Facial e Imitação</h3>
+<ul class="step-list">
+<li>Posicione-se a <strong>30 cm</strong> do rosto do bebê (contato visual)</li>
+<li>Faça <strong>expressões faciais amplas</strong> (sorriso, surpresa, tristeza)</li>
+<li>Observe se o bebê imita, especialmente o sorriso</li>
+<li>Utilize <strong>espelhos não quebráveis</strong> para auto reconhecimento</li>
+<li>Converse com tom de voz melodioso, pausado e entusiasmado</li>
+<li>Respeite quando desviar o olhar (sinal de cansaço)</li>
+</ul>
+<div class="info-tags">
+<span class="tag">⏱️ 10-15 min/sessão</span>
+<span class="tag">📅 Várias vezes/dia</span>
+<span class="tag">💡 Integrar aos cuidados</span>
+</div>
+</div>
+<div class="activity-card fade-in-up stagger-1">
+<h3>✈️ Brincadeiras de Contato Corporal</h3>
+<ul class="step-list">
+<li><strong>Bebê Voador:</strong> Deite-se, coloque o bebê de bruços sobre as pernas</li>
+<li>Eleve lentamente as pernas, fazendo o bebê "voar" na horizontal</li>
+<li><strong>Cócegas suaves:</strong> Na barriga, axilas e pés (pontas dos dedos)</li>
+<li>Jogo "dedo mindinho, seu vizinho" tocando cada dedo</li>
+<li><strong>Massagem suave</strong> com óleo vegetal adequado</li>
+<li>Cante músicas de roda ou parlendas durante o contato</li>
+</ul>
+<div class="info-tags">
+<span class="tag">⏱️ 5-10 min cada</span>
+<span class="tag">📅 1-2x ao dia</span>
+<span class="tag caution">⚠️ Apoio seguro da cabeça</span>
+</div>
+</div>
+</div>
+</div>
+<div class="slide theory-slide" data-section="t2">
+<div class="slide-header">
+<h2>💝 Fundamentação Psicológica - Socioemocional</h2>
+</div>
+<div class="slide-content">
+<div class="theory-card fade-in-up">
+<h3>Estar Só na Presença de Alguém</h3>
+<p>A habilidade de estar só tem sua base na experiência precoce de <strong>estar só na presença de alguém</strong>. A presença de alguém que não exige nada do bebê, mas está ali somente e essencialmente como presença, permite ao bebê a experiência da solidão e o paradoxo de criar o "mundo".</p>
+</div>
+<div class="quote-box fade-in-up stagger-1">
+<p>"O impulso do bebê de destruir é real, e ele precisa experimentá-lo, mas só poderá fazê-lo se houver segurança, isto é, se não houver risco de o objeto sucumbir."</p>
+<div class="author">— Elsa Oliveira Dias (2003)</div>
+</div>
+<div class="theory-card fade-in-up stagger-2">
+<h3>Preocupação Materna Primária (Arruda &amp; Andrieto, 2009)</h3>
+<p>A <strong>preocupação materna primária</strong> é fundamental para o desenvolvimento emocional saudável. Quando a mãe está neste estado, ela está apta a fornecer um cuidado pessoal ao bebê, marcado por uma história e uma experiência. O cuidado está baseado no gesto do bebê, no qual ele tem a ilusão de ter criado o mundo.</p>
+</div>
+</div>
+</div>
+<div class="slide content-slide" data-section="t2">
+<div class="slide-header">
+<h2>🌟 Em resumo...</h2>
+</div>
+<div class="slide-content">
+<div class="content-grid">
+<div class="content-box fade-in-up">
+<h3><span class="icon">⏰</span> Respeito ao Tempo do Bebê</h3>
+<p style="font-size: 1.1em; line-height: 1.8; color: #495057;">
+                            A estimulação precoce é saudável quando <strong>respeita o tempo do bebê</strong> e se insere na relação afetiva. 
+                            Dar tempo para a criança e respeitar seu ritmo é fundamental. As formas mais naturais e espontâneas 
+                            de movimento são as mais eficientes.
+                        </p>
+</div>
+<div class="content-box fade-in-up stagger-1">
+<h3><span class="icon">🚫</span> Não Antecipar Simbolizações</h3>
+<p style="font-size: 1.1em; line-height: 1.8; color: #495057;">
+                            A estimulação que antecipa simbolizações ou exige conquistas para as quais o bebê não está preparado 
+                            configura-se como <strong>invasão</strong>. O cuidado técnico e programado é sentido como irreal para o bebê, 
+                            ferindo o <em>true self</em> e favorecendo o <em>false self</em>.
+                        </p>
+</div>
+</div>
+<div class="highlight-box fade-in-up stagger-2" style="margin-top: 30px;">
+<h3 style="color: #667eea; margin-bottom: 15px;">💡 Princípios Fundamentais</h3>
+<p style="font-size: 1.2em; line-height: 2;">
+                        • A estimulação deve estar <strong>inserida na relação afetiva</strong> com o cuidador, nunca sendo técnica mecânica<br/>
+                        • O <em>holding</em> não é apenas segurar fisicamente, mas a <strong>provisão ambiental total</strong><br/>
+                        • As práticas favorecem a <strong>continuidade do desenvolvimento emocional</strong> através da memória da presença<br/>
+                        • O ambiente suficientemente bom oportuniza integração, personalização e relações objetais
+                    </p>
+</div>
+</div>
+</div>
+<div class="slide refs-slide" data-section="t2">
+<div class="slide-header">
+<h2>📚 REFERÊNCIAS</h2>
+</div>
+<div class="slide-content">
+<div class="ref-item">
+<strong>ARRUDA, S. L. S.; ANDRIETO, E.</strong> Mães psicóticas e seus bebês: uma leitura winnicottiana. 
+                    <em>Arquivos Brasileiros de Psicologia</em>, Rio de Janeiro, v. 61, n. 3, p. 97-110, 2009.
+                </div>
+<div class="ref-item">
+<strong>BRASIL. Ministério da Saúde.</strong> <em>Desenvolvimento neuropsicomotor, sinais de alerta e estimulação precoce: um guia para profissionais de saúde e educação</em>. Brasília: MS, 2023.
+                </div>
+<div class="ref-item">
+<strong>BRASIL. Ministério da Saúde.</strong> <em>Diretrizes de estimulação precoce: crianças de zero a 3 anos com atraso no desenvolvimento neuropsicomotor</em>. Brasília: MS, 2016.
+                </div>
+<div class="ref-item">
+<strong>DIAS, E. O.</strong> <em>A teoria do amadurecimento de D. W. Winnicott</em>. Rio de Janeiro: Imago, 2003.
+                </div>
+<div class="ref-item">
+<strong>HADDERS-ALGRA, M.</strong> Early human motor development: From variation to the ability to vary and adapt. 
+                    <em>Neuroscience &amp; Biobehavioral Reviews</em>, v. 107, p. 729-743, 2019.
+                </div>
+<div class="ref-item">
+<strong>MAIA, L. A.; PINHEIRO, M. C. P.</strong> As contribuições de Donald Woods Winnicott para a psicossomática. 
+                    <em>Psicoterapia</em>, v. 42, n. 2, p. 1-10, 2019.
+                </div>
+<div class="ref-item">
+<strong>SANTOS, E. S.</strong> <em>D. W. Winnicott e Heidegger: a teoria do amadurecimento pessoal e a acontecência humana</em>. Tese (Doutorado) - UNICAMP, Campinas, 2006.
+                </div>
+<div class="ref-item">
+<strong>SCALHA, T. B. et al.</strong> A importância do brincar no desenvolvimento psicomotor: relato de experiência. 
+                    <em>Revista de Psicologia da UNESP</em>, v. 9, n. 2, p. 81-91, 2010.
+                </div>
+<div class="ref-item">
+<strong>TRINDADE, J. C. S.; FONSECA-SILVA, M. C.</strong> Memória da presença e desenvolvimento emocional em Winnicott. 
+                    <em>Natureza Humana</em>, São Paulo, v. 23, n. 1, p. 55-82, 2021.
+                </div>
+<div class="ref-item">
+<strong>WINNICOTT, D. W.</strong> <em>O Brincar e a Realidade</em>. Rio de Janeiro: Imago, 2019.
+                </div>
+</div>
+</div>
+<div class="slide title-slide" data-section="t2">
+<h1>Obrigado!</h1>
+<h2>Estimulação Precoce com Base Científica</h2>
+<h3> Luis Oliveira - Psicólogo Clínico</h3>
+<h4> CRP 06/159433</h4>
+<div class="subtitle" style="margin-top: 40px;">
+                "A saúde mental de qualquer sujeito está relacionada com o desenvolvimento emocional do bebê."<br/>
+<em>— D.W. Winnicott</em>
+</div>
+</div>
+<div class="slide cover-slide" data-section="t3">
+<div class="baby-icon">👶</div>
+<h1>Estimulação Precoce no Terceiro Trimestre</h1>
+<p style="font-size: 1.5em; margin: 20px 0;">7 a 9 meses de vida</p>
+<p>Uma abordagem integrada baseada na teoria winnicottiana do amadurecimento e nas diretrizes do Ministério da Saúde</p>
+<div style="margin-top: 50px; font-size: 0.9em; opacity: 0.9;">
+<p>Fundamentação teórica: Elsa Oliveira Dias, D.W. Winnicott e Guia de Desenvolvimento Neuropsicomotor do MS</p>
+</div>
+</div>
+<div class="slide" data-section="t3">
+<div class="slide-number">2</div>
+<h1>1. Introdução Teórica do Período</h1>
+<h2>1.1 Características Maturacionais do Bebê (7-9 meses)</h2>
+<p>Segundo o <strong>Guia de Desenvolvimento Neuropsicomotor do Ministério da Saúde (2023)</strong>, o período de 7 a 9 meses representa uma fase de transição crucial no desenvolvimento infantil. Aos 7 meses, o bebê apresenta desenvolvimento adequado da musculatura de tronco e da pelve, permitindo ótima estabilidade na postura sentada, com retificação evidente do tronco. Aos 8 meses, com o domínio das rotações, o bebê experimenta várias posturas diferentes: sentar em anel, sentar de lado (side-sitting), sentar com as pernas estendidas (long-sitting) e sentar entre os calcanhares (sentar em "W") [^16^].</p>
+<div class="highlight-box">
+<strong>Marco crucial aos 9 meses:</strong> Uma vez na postura de gatas, a criança experimenta as transferências de peso, balançando para frente, para trás e para os lados, desenvolvendo o equilíbrio e a força muscular para iniciar o engatinhar. Inicialmente desenvolve o engatinhar com o tronco em bloco e depois de maneira dissociada, com movimentos laterais do tronco [^16^].
+            </div>
+<h2>1.2 Marcos do Desenvolvimento segundo o Ministério da Saúde (2023)</h2>
+<table>
+<tr>
+<th>Idade</th>
+<th>Marcos Motores</th>
+<th>Marcos Cognitivos/Sociais</th>
+</tr>
+<tr>
+<td>7 meses</td>
+<td>Senta sem apoio; reações de equilíbrio presentes; eleva a cabeça como se fosse sentar (supino)</td>
+<td>Brinca de esconde-achou; transfere objetos de uma mão para outra; lalação iniciada</td>
+</tr>
+<tr>
+<td>8 meses</td>
+<td>Assume posição quadrúpede; transfere de prono para sentado; bom equilíbrio de tronco</td>
+<td>Estranha pessoas desconhecidas; ansiedade de separação dos cuidadores</td>
+</tr>
+<tr>
+<td>9 meses</td>
+<td>Engatinha; transferências de sentado para gatas; assume posição de joelhos; fica de pé com apoio</td>
+<td>Compreende o "não"; procura origem do som; preensão em pinça inferior</td>
+</tr>
+</table>
+<h2>1.3 Concepção Winnicottiana: Dependência Relativa</h2>
+<p>De acordo com <strong>Elsa Oliveira Dias (2003, 2008)</strong>, a teoria winnicottiana do amadurecimento pessoal descreve que, entre 6 meses e 2 anos, o bebê passa da <strong>dependência absoluta</strong> para a <strong>dependência relativa</strong>. Nessa fase, o bebê transita de uma relação com um objeto subjetivo para um objeto objetivamente percebido, caracterizando-se pela redução da dependência do ambiente. O bebê começa a perceber sinais externos, tratando-se de um período de separação gradual [^12^][^15^].</p>
+<p>Como destacam <strong>Trindade e Fonseca-Silva (2021)</strong>, é nessa fase que se inicia a constituição do eu winnicottiano, marcada pela <strong>ilusão de onipotência</strong>, quando o bebê, baseado na adaptação materna, acredita criar o objeto que lhe é oferecido. Essa vivência gera a <strong>memória da presença</strong>, formada a partir da repetição dos cuidados da mãe e impressões sensoriais associadas à amamentação e ao encontro do objeto [^10^][^12^].</p>
+<h2>1.4 Importância do Brincar e da Estimulação Adequada</h2>
+<p>Conforme <strong>Scalha et al. (2010)</strong>, o brincar é o início do processo de aprendizagem: a criança brinca naturalmente, num processo biológico, inato e genético, com a mera finalidade de aprender a apreender. Pela brincadeira, ela explora seu corpo e seu ambiente, desenvolvendo sensações exteroceptivas, proprioceptivas e vestibulares. Sua curiosidade é estimulada, ela aprende a agir, adquire iniciativa e autoconfiança [^7^].</p>
+<div class="success-box">
+<strong>Princípio Winnicottiano Fundamental:</strong> A qualidade do cuidado, nos aspectos físico e afetivo-social, decorre de condições estáveis de vida. Estudos sobre associação entre estimulação ambiental e cognição concluem que mães orientadas a estimularem seus bebês, por meio de uma variedade de experiências perceptivas com pessoas, objetos e símbolos, contribuem para o desenvolvimento cognitivo das crianças, observando-se consequências positivas em longo prazo [^7^].
+            </div>
+</div>
+<div class="slide" data-section="t3">
+<div class="slide-number">3</div>
+<h1>2. Funções Motoras</h1>
+<h2>2.1 Objetivo da Estimulação</h2>
+<p>Busca-se desenvolver a <strong>integração psicossomática</strong> através do <em>handling</em> adequado, promovendo a passagem do estágio de não integração para o de integração espaço-temporal, onde o bebê se instituí como uma unidade. O objetivo específico nesta fase é consolidar o equilíbrio de tronco, desenvolver a preensão em pinça inferior (polegar opondo-se aos outros dedos) e preparar a musculatura para o engatinhar, respeitando o ritmo maturacional individual [^14^][^16^].</p>
+<h2>2.2 Atividades Práticas</h2>
+<div class="activity-card">
+<h4>Atividade 1: Estimulação do Equilíbrio de Tronco</h4>
+<p><strong>Posição do bebê:</strong> Sentado em diferentes bases (anel, lateral, pernas estendidas), sobre superfície firme e segura.</p>
+<p><strong>Ação do cuidador:</strong> Posicionar-se frente ao bebê, aproximadamente 50cm de distância, chamando atenção com brinquedos coloridos ou própria face. Inclinar levemente o bebê para os lados, estimulando reações de equilíbrio protetoras.</p>
+<p><strong>Duração:</strong> 5-10 minutos por sessão.</p>
+<p><strong>Frequência:</strong> 3 vezes ao dia.</p>
+<p><strong>Cuidados:</strong> Manter ambiente seguro com superfície amortecida; nunca forçar a postura se o bebê apresentar resistência; observar sinais de cansaço.</p>
+</div>
+<div class="activity-card">
+<h4>Atividade 2: Incentivo ao Engatinhar (Preparatório)</h4>
+<p><strong>Posição do bebê:</strong> Posição quadrúpede (de gatas), sobre tapete antiderrapante.</p>
+<p><strong>Ação do cuidador:</strong> Apoiar levemente a pelve do bebê, incentivando transferências de peso para frente, trás e laterais. Utilizar brinquedos atrativos posicionados ligeiramente fora do alcance imediato.</p>
+<p><strong>Duração:</strong> 5-8 minutos.</p>
+<p><strong>Frequência:</strong> 2-3 vezes ao dia.</p>
+<p><strong>Cuidados:</strong> Não forçar o engatinhar se o bebê ainda não demonstrar readiness motor; alguns bebês "pulam" esta etapa, o que é considerado normal [^14^].</p>
+</div>
+<div class="activity-card">
+<h4>Atividade 3: Desenvolvimento da Pinça Inferior</h4>
+<p><strong>Posição do bebê:</strong> Sentado ou no colo do cuidador, com apoio lombar.</p>
+<p><strong>Ação do cuidador:</strong> Oferecer biscoitos pequenos, cereais ou objetos de diferentes texturas e tamanhos (sempre seguros), incentivando a preensão com polegar e indicador.</p>
+<p><strong>Duração:</strong> 10-15 minutos durante as refeições/lanches.</p>
+<p><strong>Frequência:</strong> Diária, durante as refeições.</p>
+<p><strong>Cuidados:</strong> Supervisão constante para prevenir engasgos; objetos devem ser grandes o suficiente para não serem aspirados.</p>
+</div>
+<h2>2.3 Fundamentação Psicológica</h2>
+<p>De acordo com <strong>Winnicott (apud Dias, 2003; Trindade &amp; Fonseca-Silva, 2021)</strong>, durante a fase de dependência relativa (que se inicia aos 6 meses), o bebê passa de uma relação com objeto subjetivo para objeto objetivamente percebido. As atividades motoras propostas favorecem essa transição ao permitir que o bebê explore ativamente o ambiente, diferenciando o "eu" do "não-eu" através do contato físico com objetos e superfícies [^12^][^15^].</p>
+<p>O <em>handling</em> materno (manuseio) adequado promove a <strong>integração psicossomática</strong>, ou seja, a ligação entre corpo e psique. Quando a mãe segura adequadamente o bebê durante estas atividades, ela propicia a saída do estágio de não integração, onde corpo e psique não estão ligados, para o estágio de integração espaço-temporal [^19^].</p>
+<div class="reference-box">
+<strong>Referência científica:</strong> ARRUDA, S. L. S.; ANDRIETO, E. Mães psicóticas e seus bebês: uma leitura winnicottiana. Arquivos Brasileiros de Psicologia, Rio de Janeiro, v. 61, n. 3, p. 97-110, 2009. [^4^]
+            </div>
+</div>
+<div class="slide" data-section="t3">
+<div class="slide-number">4</div>
+<h1>3. Funções Cognitivas</h1>
+<h2>3.1 Objetivo da Estimulação</h2>
+<p>Desenvolver a <strong>permanência do objeto</strong> e a capacidade de formar <strong>memória da presença</strong>, consolidando a constituição do self winnicottiano. Busca-se promover a transição da ilusão de onipotência para a percepção da realidade externa, através da constância e confiabilidade do ambiente, permitindo ao bebê a experiência de ser alguém real em comunicação com o self e o mundo [^10^][^12^].</p>
+<h2>3.2 Atividades Práticas</h2>
+<div class="activity-card">
+<h4>Atividade 1: Brincadeira do Esconde-Achou (Object Permanence)</h4>
+<p><strong>Posição do bebê:</strong> Sentado confortavelmente, com boa estabilidade de tronco.</p>
+<p><strong>Ação do cuidador:</strong> Esconder parcialmente um brinquedo favorito sob um lençol ou cobertor, deixando parte visível. Incentivar o bebê a buscar o objeto. Progressivamente, esconder completamente o objeto.</p>
+<p><strong>Duração:</strong> 5-10 minutos.</p>
+<p><strong>Frequência:</strong> 2-3 vezes ao dia.</p>
+<p><strong>Cuidados:</strong> Utilizar brinquedos familiares para não gerar ansiedade excessiva; celebrar quando o bebê encontrar o objeto; nunca esconder por tempo prolongado.</p>
+</div>
+<div class="activity-card">
+<h4>Atividade 2: Exploração Sensorial Diferenciada</h4>
+<p><strong>Posição do bebê:</strong> Sentado ou no colo, em ambiente seguro.</p>
+<p><strong>Ação do cuidador:</strong> Oferecer objetos com diferentes texturas (áspero, liso, macio, duro), temperaturas (morno, frio - sempre seguro) e sons. Nomear as qualidades sensoriais ("isso é macio", "isso faz barulho").</p>
+<p><strong>Duração:</strong> 10-15 minutos.</p>
+<p><strong>Frequência:</strong> Diária.</p>
+<p><strong>Cuidados:</strong> Objetos devem ser higienizados e seguros (não tóxicos, sem partes soltas); observar preferências do bebê.</p>
+</div>
+<div class="activity-card">
+<h4>Atividade 3: Imitação de Gestos Simples</h4>
+<p><strong>Posição do bebê:</strong> Frente a frente com o cuidador, em posição confortável.</p>
+<p><strong>Ação do cuidador:</strong> Realizar gestos simples (bater palmas, acenar "tchau", bater na mesa) e incentivar a imitação. Utilizar expressões faciais animadas e reforço positivo.</p>
+<p><strong>Duração:</strong> 5-10 minutos.</p>
+<p><strong>Frequência:</strong> Durante as interações cotidianas.</p>
+<p><strong>Cuidados:</strong> Não exigir performance; celebrar tentativas; manter clima lúdico.</p>
+</div>
+<h2>3.3 Fundamentação Psicológica</h2>
+<p>Segundo <strong>Trindade e Fonseca-Silva (2021)</strong>, a <strong>memória da presença</strong> constitui-se nas marcas da presença materna que o bebê já é capaz de sentir e confiar, pelas repetidas experiências em que ele pôde se retirar do mundo "objetivo" tranquilamente, retornando ao seu mundo subjetivo. As brincadeiras de esconde-achou são fundamentais nesta fase porque, entre 8 e 9 meses, os lactentes percebem a permanência do objeto - eles conseguem saber que um objeto existe, mesmo que não consigam enxergá-lo [^10^][^14^].</p>
+<p>De acordo com <strong>Scalha et al. (2010)</strong>, a manipulação de materiais lúdicos diferenciados possibilita ao bebê adquirir informações que irão subsidiar a posterior formação de conceitos. Mesmo que ainda não consiga assimilar ou explicar como as coisas acontecem, o pensamento vai sendo estimulado e os processos mentais vão se desenvolvendo [^7^].</p>
+<div class="highlight-box">
+<strong>Conexão Winnicottiana:</strong> A constância e confiabilidade do ambiente promovem ao bebê a experiência como alguém real. Quando o objeto reaparece nas brincadeiras de esconde-achou, o bebê internaliza a confiabilidade do mundo, fundamentando a capacidade de estar só na presença do outro - conceito central na teoria winnicottiana [^10^][^13^].
+            </div>
+</div>
+<div class="slide" data-section="t3">
+<div class="slide-number">5</div>
+<h1>4. Funções Socioemocionais</h1>
+<h2>4.1 Objetivo da Estimulação</h2>
+<p>Consolidar o vínculo afetivo através da <strong>preocupação materna primária</strong> (mesmo que em sua fase de transição), promover a diferenciação entre figuras familiares e estranhos, e desenvolver a capacidade de comunicação pré-verbal. Busca-se a internalização de um ambiente <strong>suficientemente bom</strong> que permita ao bebê experimentar a realidade sem ser traumatizado pela impossibilidade de onipotência [^4^][^12^].</p>
+<h2>4.2 Atividades Práticas</h2>
+<div class="activity-card">
+<h4>Atividade 1: Interação Face a Face com Vocalização</h4>
+<p><strong>Posição do bebê:</strong> No colo do cuidador ou sentado frente a frente, a aproximadamente 30cm de distância (distância ideal para focalização visual).</p>
+<p><strong>Ação do cuidador:</strong> Imitar as vocalizações do bebê (lalação), criando "diálogos" de turno-taking. Utilizar expressões faciais exageradas, variações de entonação e pausas para que o bebê "responda".</p>
+<p><strong>Duração:</strong> 10-15 minutos.</p>
+<p><strong>Frequência:</strong> Várias vezes ao dia, especialmente durante a alimentação e troca de fraldas.</p>
+<p><strong>Cuidados:</strong> Respeitar o tempo de resposta do bebê (pode levar alguns segundos); nunca interromper a vocalização do bebê; manter contato visual.</p>
+</div>
+<div class="activity-card">
+<h4>Atividade 2: Brincadeira de Apego Seguro com Ansiedade de Separação</h4>
+<p><strong>Posição do bebê:</strong> Sentado ou engatinhando em ambiente seguro e familiar.</p>
+<p><strong>Ação do cuidador:</strong> Sair brevemente do campo visual (2-3 minutos), verbalizando "mamãe volta já", e retornar com cumprimento afetivo. Progressivamente aumentar o tempo de ausência (até 5 minutos).</p>
+<p><strong>Duração:</strong> 5-10 minutos.</p>
+<p><strong>Frequência:</strong> 1-2 vezes ao dia.</p>
+<p><strong>Cuidados:</strong> Nunca "sumir" sem aviso verbal; retornar sempre que prometido; acolher o bebê se chorar, sem minimizar sua angústia; não forçar interação com estranhos durante este período.</p>
+</div>
+<div class="activity-card">
+<h4>Atividade 3: Leitura Compartilhada com Livros de Pano/Board Books</h4>
+<p><strong>Posição do bebê:</strong> No colo do cuidador, posição confortável para ambos.</p>
+<p><strong>Ação do cuidador:</strong> Ler livros com figuras grandes, cores contrastantes e texturas. Apontar para objetos, nomear e aguardar a atenção do bebê. Permitir que o bebê manipule o livro (virar páginas grossas).</p>
+<p><strong>Duração:</strong> 5-10 minutos.</p>
+<p><strong>Frequência:</strong> Diária, preferencialmente antes de dormir.</p>
+<p><strong>Cuidados:</strong> Não forçar a atenção se o bebê perder interesse; utilizar tom de voz suave e entonação melodiosa; criar ritual fixo.</p>
+</div>
+<h2>4.3 Fundamentação Psicológica</h2>
+<p>Conforme <strong>Arruda e Andrieto (2009)</strong>, a teoria de Winnicott enfatiza a relação mãe-bebê desde seus primórdios e sustenta que a saúde mental de qualquer sujeito está relacionada com o desenvolvimento emocional primitivo. A preocupação materna primária, embora diminua de intensidade após os primeiros meses, continua sendo fundamental na transição para a dependência relativa, quando o bebê começa a perceber a separação entre eu e o outro [^4^].</p>
+<p>De acordo com <strong>Dias (1999, 2003)</strong>, a <strong>confiabilidade</strong> é a característica central do ambiente facilitador. No estágio em que o bebê passa da dependência absoluta para a dependência relativa, a questão da confiabilidade ambiental torna-se crucial. Caberá à mãe falhar ao bebê sem, no entanto, falhar na confiabilidade - ou seja, pequenas ausências são necessárias para o desenvolvimento, desde que sejam previsíveis e reparadas [^13^].</p>
+<div class="warning-box">
+<strong>Ansiedade de Separação (8-9 meses):</strong> Este fenômeno é um marco saudável de desenvolvimento, indicando que o bebê estabeleceu vínculos diferenciados. Segundo Winnicott (apud Arruda &amp; Andrieto, 2009), o bebê passa a estranhar pessoas que não conhece e ficar ansioso quando se afasta dos cuidadores - isto demonstra a constituição de um self capaz de reconhecer o outro [^4^][^14^].
+            </div>
+</div>
+<div class="slide" data-section="t3">
+<div class="slide-number">6</div>
+<h1>5. Síntese Integrativa</h1>
+<h2>A Estimulação Precoce Saudável e o Tempo do Bebê</h2>
+<p>A estimulação precoce é saudável quando respeita o <strong>tempo do bebê</strong> - ritmo maturacional individual inscrito na tendência inata ao amadurecimento descrita por Winnicott. Conforme <strong>Elsa Oliveira Dias (2003, 2008)</strong>, embora inata, a tendência ao amadurecimento não vai de si, como se bastasse a mera passagem do tempo; trata-se de uma tendência e não de uma determinação. Para que se realize, o bebê depende fundamentalmente da presença de um <strong>ambiente facilitador</strong> que forneça cuidados suficientemente bons [^15^][^18^].</p>
+<div class="highlight-box">
+<strong>Princípio Fundamental:</strong> "Precisamos chegar a uma teoria do amadurecimento normal para podermos ser capazes de compreender as doenças e as várias imaturidades, uma vez que não nos damos por satisfeitos a menos que possamos preveni-las e curá-las." (Winnicott, 1962, apud Dias, 2008) [^18^].
+            </div>
+<h2>Por que não antecipar simbolizações?</h2>
+<p>De acordo com a teoria winnicottiana, o bebê de 7-9 meses ainda está consolidando a <strong>permanência do objeto</strong> e a diferenciação eu/não-eu. Antecipar simbolizações complexas (como representação mental abstrata) pode sobrecarregar o aparato psíquico ainda em formação. O jogo de esconde-achou é o limite superior adequado para esta faixa etária, pois trabalha a permanência do objeto concreto, não exigindo ainda capacidades representacionais que se desenvolverão após os 18 meses [^10^][^14^].</p>
+<p>Como destacam <strong>Scalha et al. (2010)</strong>, a vantagem das aprendizagens alcançadas através do brincar é o fato de que os enganos cometidos não são considerados erros, mas tentativas de acerto. Quando a criança não tem medo de errar, arrisca mais e é mantido o clima de alegria e descontração [^7^].</p>
+<h2>A Estimulação Inserida na Relação Afetiva</h2>
+<p>Segundo <strong>Trindade e Fonseca-Silva (2021)</strong>, a constituição do self winnicottiano está ancorada na experiência de sustentação oportunizada por um ambiente suficientemente bom, que se inscreve na experiência do bebê como uma <strong>memória da presença</strong>. As atividades de estimulação não devem ser mecânicas ou técnicas isoladas, mas momentos de encontro afetivo entre cuidador e bebê [^10^].</p>
+<p>A <strong>participação familiar</strong> é de suma importância não somente para o desenvolvimento neuropsicomotor, mas também pelos aspectos sociais, de convivência, formação de vínculo afetivo e prevenção de deficiências secundárias. O fator fundamental para o desenvolvimento é a presença e a <strong>qualidade dessa presença</strong> [^7^].</p>
+<h2>Favorecimento da Continuidade do Desenvolvimento Emocional</h2>
+<p>As práticas propostas favorecem a continuidade do desenvolvimento emocional ao:</p>
+<ul>
+<li><strong>Consolidar a integração psicossomática:</strong> Através do holding e handling adequados durante as atividades motoras [^19^];</li>
+<li><strong>Internalizar a confiabilidade:</strong> Através da constância do cuidador e da previsibilidade das rotinas [^13^];</li>
+<li><strong>Desenvolver a capacidade de estar só:</strong> Através da brincadeira de esconde-achou e da experiência de que o objeto ausente continua existindo [^10^];</li>
+<li><strong>Preparar para o estágio do concernimento:</strong> Ao permitir que o bebê experimente a destruição do objeto (na brincadeira) e sua sobrevivência, preparando o terreno para a capacidade de se preocupar com o outro [^15^].</li>
+</ul>
+<div class="success-box">
+<strong>Conclusão:</strong> A estimulação precoce no terceiro trimestre deve ser compreendida como a criação de um ambiente facilitador que permita à tendência inata ao amadurecimento se realizar. Não se trata de "ensinar" habilidades, mas de propiciar experiências que consolidem o self, a integração psicossomática e a capacidade de relacionamento objetal, sempre respeitando o ritmo individual do bebê e a qualidade da presença materna.
+            </div>
+</div>
+<div class="slide" data-section="t3">
+<div class="slide-number">7</div>
+<h1>Referências</h1>
+<div class="reference-box">
+                ARRUDA, S. L. S.; ANDRIETO, E. <strong>Mães psicóticas e seus bebês: uma leitura winnicottiana.</strong> Arquivos Brasileiros de Psicologia, Rio de Janeiro, v. 61, n. 3, p. 97-110, 2009.
+            </div>
+<div class="reference-box">
+                DIAS, E. O. <strong>A teoria do amadurecimento de D. W. Winnicott.</strong> Rio de Janeiro: Imago, 2003.
+            </div>
+<div class="reference-box">
+                DIAS, E. O. <strong>Sobre a confiabilidade: decorrências para a prática clínica.</strong> Natureza Humana, v. 1, n. 2, p. 283-322, 1999.
+            </div>
+<div class="reference-box">
+                DIAS, E. O. <strong>A teoria winnicottiana do amadurecimento como guia da prática clínica.</strong> Natureza Humana, v. 10, n. 1, p. 36-54, 2008.
+            </div>
+<div class="reference-box">
+                HADDERS-ALGRA, M. <strong>Early human motor development: From variation to the ability to vary and adapt.</strong> Neuroscience &amp; Biobehavioral Reviews, v. 107, p. 729-743, 2019.
+            </div>
+<div class="reference-box">
+                TRINDADE, J. C. S.; FONSECA-SILVA, M. C. <strong>Memória da presença e desenvolvimento emocional em Winnicott.</strong> Natureza Humana, v. 23, n. 1, p. 55-82, 2021.
+            </div>
+<div class="reference-box">
+                MINISTÉRIO DA SAÚDE. <strong>Desenvolvimento neuropsicomotor, sinais de alerta e estimulação precoce: um guia para profissionais de saúde e educação.</strong> Brasília: MS, 2023.
+            </div>
+<div class="reference-box">
+                SCALHA, T. B. et al. <strong>A importância do brincar no desenvolvimento psicomotor: relato de experiência.</strong> Revista de Psicologia da UNESP, v. 9, n. 2, p. 81-91, 2010.
+            </div>
+<div class="reference-box">
+                WINNICOTT, D. W. <strong>Da Pediatria à Psicanálise.</strong> Rio de Janeiro: Imago, 2000.
+            </div>
+<div class="reference-box">
+                WINNICOTT, D. W. <strong>Os Bebês e suas Mães.</strong> Rio de Janeiro: Imago, 1999.
+            </div>
+<div class="reference-box">
+                WINNICOTT, D. W. <strong>O Brincar e a Realidade.</strong> Rio de Janeiro: Imago, 2019.
+            </div>
+<div class="reference-box">
+                WINNICOTT, D. W. <strong>Explorações Psicanalíticas.</strong> Rio de Janeiro: Imago, 1994.
+            </div>
+<div style="margin-top: 40px; text-align: center; color: #666; font-size: 0.9em;">
+<p>E-book elaborado exclusivamente com base em referências científicas brasileiras (A1-A4)</p>
+<p>Conforme diretrizes do Ministério da Saúde e teoria winnicottiana do amadurecimento</p>
+</div>
+</div>
+</div>
+
+<div class="navigation">
+    <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">&#9664; Anterior</button>
+    <div class="slide-counter">
+        <span id="currentSlide">1</span> / <span id="totalSlides">-</span>
+    </div>
+    <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Pr&#243;xima &#9654;</button>
+</div>
+
+<script>
+
+    const SECTIONS = { t1: true, t2: true, t3: true };
+    let currentSection = 't1';
+    let currentIndex = 0;
+
+    function getSlides(section) {
+        return Array.from(document.querySelectorAll('.slide[data-section="' + section + '"]'));
+    }
+
+    function updateView() {
+        const slides = getSlides(currentSection);
+        slides.forEach(function(s, i) {
+            s.classList.toggle('active', i === currentIndex);
+        });
+        var total = slides.length;
+        document.getElementById('currentSlide').textContent = currentIndex + 1;
+        document.getElementById('totalSlides').textContent = total;
+        document.getElementById('prevBtn').disabled = currentIndex === 0;
+        document.getElementById('nextBtn').disabled = currentIndex === total - 1;
+        document.getElementById('progressBar').style.width = ((currentIndex + 1) / total * 100) + '%';
+        if (currentSection === 't3' && slides[currentIndex]) {
+            slides[currentIndex].scrollTop = 0;
+        }
+    }
+
+    function changeSlide(dir) {
+        var slides = getSlides(currentSection);
+        var newIndex = currentIndex + dir;
+        if (newIndex >= 0 && newIndex < slides.length) {
+            currentIndex = newIndex;
+            updateView();
+        }
+    }
+
+    function switchSection(section) {
+        document.querySelectorAll('.slide').forEach(function(s) { s.classList.remove('active'); });
+        currentSection = section;
+        currentIndex = 0;
+        ['t1','t2','t3'].forEach(function(k) {
+            document.getElementById('btn-' + k).classList.toggle('active', k === section);
+        });
+        updateView();
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); changeSlide(1); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); changeSlide(-1); }
+        else if (e.key === '1') switchSection('t1');
+        else if (e.key === '2') switchSection('t2');
+        else if (e.key === '3') switchSection('t3');
+    });
+
+    var touchStartX = 0;
+    document.addEventListener('touchstart', function(e) { touchStartX = e.changedTouches[0].screenX; }, {passive: true});
+    document.addEventListener('touchend', function(e) {
+        var diff = touchStartX - e.changedTouches[0].screenX;
+        if (Math.abs(diff) > 50) changeSlide(diff > 0 ? 1 : -1);
+    }, {passive: true});
+
+    switchSection('t1');
+
+</script>
+</body>
+</html>
